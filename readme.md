@@ -1,6 +1,6 @@
 # Markov Chain Generator
 
-This is a project paid for by (**Qiong Zhou Huang**)[www.mit.edu] as an attempt to generate LMFAO statements similar to his friend **Endar**
+This is a project paid for by [**Qiong Zhou Huang**](www.mit.edu) as an attempt to generate LMFAO statements similar to his friend **Endar**
 
 ## How To Compile
 
