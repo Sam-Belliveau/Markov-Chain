@@ -27,3 +27,5 @@ OPTIONS:
     -d, --dictionary <dictionary>          Dictionary from which character probabilities are built from
     -o, --output-length <output length>    The length of the output Markov Chain [default: 1000]
 ```
+
+So Qiong, I know you're the only one using this, so just type `cargo run -- -d endar_lmaos.txt`.
