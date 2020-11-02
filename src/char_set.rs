@@ -3,7 +3,7 @@
 pub type IDType = usize;
 
 // Dictionary of characters
-pub const CHAR_SET: &'static str = " abcdefghijklmnopqrstuvwxyz,.";
+pub const CHAR_SET: &'static str = " abcdefghijklmnopqrstuvwxyz,.\n";
 
 // Length of Dictionary
 pub const LENGTH: usize = CHAR_SET.len() as usize;

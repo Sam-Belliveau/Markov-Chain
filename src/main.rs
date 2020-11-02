@@ -1,56 +1,101 @@
-use std::io::{BufRead, BufReader};
-use std::fs::File;
+#![allow(dead_code)]
+
+use std::fs;
+use clap::{Arg, App};
 mod char_set;
 mod char_prob;
 
-const LETTERS: usize = 5;
-
-fn main() {
-    // Read Dictionary
-    let mut f = BufReader::new(File::open("words.txt").expect("open failed"));
-
-    let mut dict = String::new();
-
-    for line_raw in f.lines() {
-        dict += line_raw.expect("Error Reading Line Lol!").to_lowercase().trim();
-        dict += " ";
+// Functions used to check if command line arguments are valid
+fn valid_chain_size(v: String) -> Result<(), String> {
+    match v.parse::<usize>() {
+        Ok(n) => {
+            if n <= 0 { Err(String::from("Must be >= 1!")) }
+            else if n >= 6 { Err(String::from("Values >= 6 require more than 130GB of ram!"))}
+            else { Ok(()) }
+        },
+        Err(_) => Err(String::from("Is not a recognizable positive integer!"))
     }
+}
 
-    println!("Finished Reading!");
+fn valid_output_length(v: String) -> Result<(), String> {
+    match v.parse::<usize>() {
+        Ok(_) => Ok(()),
+        Err(_) => Err(String::from("Is not a recognizable positive integer!"))
+    }
+}
 
-    // Get Probabilities
-    let array_size: usize = 1 << (LETTERS * char_set::length_bits());
-    
-    let mut probs = vec![char_prob::CharProb::new(); array_size];
 
+// Main Function
+fn main() {
+    // Taking in Arguments
+    let matches = App::new("Sam's Markov Chain Generator")
+        .version("0.1.0")
+        .author("Sam Belliveau <sam.belliveau@gmail.com>")
+        .about("Generate text based on the character probabilities from a given dictionary.")
+        .arg(Arg::with_name("dictionary")
+                 .short("d")
+                 .long("dictionary")
+                 .takes_value(true)
+                 .required(true)
+                 .help("Dictionary from which character probabilities are built from"))
+        .arg(Arg::with_name("chain size")
+                 .short("c")
+                 .long("chain-size")
+                 .takes_value(true)
+                 .default_value("2")
+                 .validator(valid_chain_size)
+                 .help("How many past characters to consider when building probabilites"))
+        .arg(Arg::with_name("output length")
+                 .short("o")
+                 .long("output-length")
+                 .takes_value(true)
+                 .default_value("1000")
+                 .validator(valid_output_length)
+                 .help("The length of the output Markov Chain"))
+        .get_matches();
+
+
+    // Read Arguments from Command Line
+    let dict_name     = matches.value_of("dictionary").unwrap();
+    let chain_size    = matches.value_of("chain size").unwrap().parse::<usize>().unwrap();
+    let output_length = matches.value_of("output length").unwrap().parse::<usize>().unwrap();
+
+    // Read Dictionary
+    let dictionary = fs::read_to_string(dict_name).expect("Error Reading Supplied File!");
+
+    // Read through the dictionary and generate probabilities for each character
+    let array_size: usize = 1 << (chain_size * char_set::length_bits());
+    let mut probabilities = vec![char_prob::CharProb::new(); array_size];
+
+    // Buffer of the last n characters to build probabilities of
     let mut buffer = String::from(" ");
 
-    for l in dict.chars() {
+    for l in dictionary.chars() {
         let id = char_set::get_str_id(&buffer);
-        probs.get_mut(id).expect("id's are fucked a").add(l);
+        probabilities.get_mut(id).expect("Internal issue with character ID's, contact the developer!").add(l);
 
-        while buffer.len() >= LETTERS {
+        while buffer.len() >= chain_size {
             buffer.remove(0);
         }
 
         buffer += &l.to_string();
     }
 
-    println!("Finished Probs!");
-
-    // Generate text
+    // Generate text from previously generated probabilites
     buffer = String::from(" ");
 
-    for _i in 0..1500 {
+    for _i in 0..output_length {
         let id = char_set::get_str_id(&buffer);
-        let next = probs.get(id).expect("id's are fucked b").get_char();
+        let next = probabilities.get(id).expect("Internal issue with character ID's, contact the developer!").get_char();
 
         print!("{}", next);
 
-        while buffer.len() >= LETTERS {
+        while buffer.len() >= chain_size {
             buffer.remove(0);
         }
 
         buffer += &next.to_string();
     }
+
+    println!("");
 }
