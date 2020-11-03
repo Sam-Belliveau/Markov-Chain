@@ -3,7 +3,7 @@
 pub type IDType = usize;
 
 // Dictionary of characters
-pub const CHAR_SET: &'static str = " abcdefghijklmnopqrstuvwxyz,.\n";
+pub const CHAR_SET: &'static str = "_ abcdefghijklmnopqrstuvwxyz,.\n";
 
 // Length of Dictionary
 pub const LENGTH: usize = CHAR_SET.len() as usize;
@@ -25,18 +25,16 @@ pub fn get_char(id: IDType) -> char{
 }
 
 // Get id from letter
-pub fn get_id(l: char) -> Option<usize> {
-    CHAR_SET.find(l.to_ascii_lowercase())
+pub fn get_id(l: char) -> usize {
+    CHAR_SET.find(l.to_ascii_lowercase()).unwrap_or(0)
 }
 
 pub fn get_str_id(word: &str) -> IDType {
     let mut id = 0 as IDType;
 
     for l in word.chars() {
-        if let Some(i) = get_id(l) {
-            id <<= length_bits();
-            id |= i;
-        }
+        id <<= length_bits();
+        id |= get_id(l);
     }
 
     id

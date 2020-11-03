@@ -21,16 +21,16 @@ impl CharProb {
     }
 
     pub fn add(&mut self, l: char) {
-        if let Some(i) = char_set::get_id(l) {
-            self.total += 1;
-            self.probs[i] += 1;
-        }
+        self.total += 1;
+        self.probs[char_set::get_id(l)] += 1;
     }
 
     pub fn get_char(&self) -> char {
         let mut rng = rand::thread_rng();
         
         if 0 == self.total {
+            // THIS IS EXTREMELY UNLIKELY
+            // UNLESS YOU ARE TRYING TO FORCE THIS
             return '?';
         }
 
