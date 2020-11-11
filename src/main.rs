@@ -72,39 +72,48 @@ fn main() {
     let mut buffer = String::from(" ");
 
     for (i, line) in dictionary.lines().enumerate() {
+        // Check if the line has any issues before adding it to probability table
         match line {
             Ok(line) => {
-                for l in line.chars() {
+                for l in (line + "\n").chars() {
+                    // Get id of the past (n) characters [the index in the probability array]
                     let id = char_set::get_str_id(&buffer);
-                    probabilities.get_mut(id).expect("Internal issue with character ID's, contact the developer!").add(l);
+
+                    // Add recent letter to the probability table
+                    probabilities.get_mut(id)
+                            .expect("Internal issue with character ID's, contact the developer!")
+                            .add(l);
             
-                    while buffer.len() >= chain_size {
-                        buffer.remove(0);
-                    }
-            
+                    // Shorten buffer and add letter to the end of it
+                    while chain_size <= buffer.len() { buffer.remove(0); }
                     buffer += &l.to_string();
                 }
             },
 
+            // Error reading one line
             Err(e) => {
-                eprintln!("Error Reading Line {}! ({})", i, e);
+                eprintln!("Ignoring Line #{}! ({})", i, e);
             }
         }
     }
 
     // Generate text from previously generated probabilites
-    buffer = String::from(" ");
+    let mut buffer = String::from(" ");
 
     for _i in 0..output_length {
+        // Get id of the past (n) characters [the index in the probability array]
         let id = char_set::get_str_id(&buffer);
-        let next = probabilities.get(id).expect("Internal issue with character ID's, contact the developer!").get_char();
 
+        // Get character based on probabilities from the array
+        let next = probabilities.get(id)
+            .expect("Internal issue with character ID's, contact the developer!")
+            .get_char();
+
+        // Print the character
         print!("{}", next);
 
-        while buffer.len() >= chain_size {
-            buffer.remove(0);
-        }
-
+        // Shorten buffer and add new letter to the end of it
+        while chain_size <= buffer.len() { buffer.remove(0); }
         buffer += &next.to_string();
     }
 

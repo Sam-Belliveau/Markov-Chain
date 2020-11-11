@@ -20,7 +20,7 @@ pub fn max_str_size() -> usize {
 }
 
 // Get letter from id
-pub fn get_char(id: IDType) -> char{
+pub fn get_char(id: IDType) -> char {
     CHAR_SET.chars().nth(id).unwrap()
 }
 
