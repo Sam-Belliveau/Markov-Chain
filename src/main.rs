@@ -1,6 +1,7 @@
 #![allow(dead_code)]
 
-use std::fs;
+use std::io::{BufRead, BufReader};
+use std::fs::File;
 use clap::{Arg, App};
 mod char_set;
 mod char_prob;
@@ -61,7 +62,7 @@ fn main() {
     let output_length = matches.value_of("output length").unwrap().parse::<usize>().unwrap();
 
     // Read Dictionary
-    let dictionary = fs::read_to_string(dict_name).expect("Error Reading Supplied File!");
+    let dictionary = BufReader::new(File::open(dict_name).expect("Error Reading Supplied File!"));
 
     // Read through the dictionary and generate probabilities for each character
     let array_size: usize = 1 << (chain_size * char_set::length_bits());
@@ -70,15 +71,25 @@ fn main() {
     // Buffer of the last n characters to build probabilities of
     let mut buffer = String::from(" ");
 
-    for l in dictionary.chars() {
-        let id = char_set::get_str_id(&buffer);
-        probabilities.get_mut(id).expect("Internal issue with character ID's, contact the developer!").add(l);
+    for (i, line) in dictionary.lines().enumerate() {
+        match line {
+            Ok(line) => {
+                for l in line.chars() {
+                    let id = char_set::get_str_id(&buffer);
+                    probabilities.get_mut(id).expect("Internal issue with character ID's, contact the developer!").add(l);
+            
+                    while buffer.len() >= chain_size {
+                        buffer.remove(0);
+                    }
+            
+                    buffer += &l.to_string();
+                }
+            },
 
-        while buffer.len() >= chain_size {
-            buffer.remove(0);
+            Err(e) => {
+                eprintln!("Error Reading Line {}! ({})", i, e);
+            }
         }
-
-        buffer += &l.to_string();
     }
 
     // Generate text from previously generated probabilites
