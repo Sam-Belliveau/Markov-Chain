@@ -68,25 +68,24 @@ fn main() {
     let array_size: usize = 1 << (chain_size * char_set::length_bits());
     let mut probabilities = vec![char_prob::CharProb::new(); array_size];
 
-    // Buffer of the last n characters to build probabilities of
-    let mut buffer = String::from("");
+    // Buffer of the last n characters (in raw ID form)
+    let mut id : usize = 0;
 
+    // Generate dictionary from text
     for (i, line) in dictionary.lines().enumerate() {
         // Check if the line has any issues before adding it to probability table
         match line {
             Ok(line) => {
                 for l in (line + "\n").chars() {
-                    // Get id of the past (n) characters [the index in the probability array]
-                    let id = char_set::get_str_id(&buffer);
-
                     // Add recent letter to the probability table
                     probabilities.get_mut(id)
                             .expect("Internal issue with character ID's, contact the developer!")
                             .add(l);
-            
-                    // Shorten buffer and add letter to the end of it
-                    while chain_size <= buffer.len() { buffer.remove(0); }
-                    buffer += &l.to_string();
+
+                    // Get id of the past (n) characters [the index in the probability array]
+                    id <<= char_set::length_bits();
+                    id |= char_set::get_id(l);
+                    id &= array_size - 1;
                 }
             },
 
@@ -97,13 +96,11 @@ fn main() {
         }
     }
 
-    // Generate text from previously generated probabilites
-    let mut buffer = String::from("");
+    // Buffer of the last n characters (in raw ID form)
+    let mut id : usize = 0;
 
+    // Generate text
     for _i in 0..output_length {
-        // Get id of the past (n) characters [the index in the probability array]
-        let id = char_set::get_str_id(&buffer);
-
         // Get character based on probabilities from the array
         let next = probabilities.get(id)
             .expect("Internal issue with character ID's, contact the developer!")
@@ -112,9 +109,10 @@ fn main() {
         // Print the character
         print!("{}", next);
 
-        // Shorten buffer and add new letter to the end of it
-        while chain_size <= buffer.len() { buffer.remove(0); }
-        buffer += &next.to_string();
+        // Shift in new letter and shift out old
+        id <<= char_set::length_bits();
+        id |= char_set::get_id(next);
+        id &= array_size - 1;
     }
 
     println!("");

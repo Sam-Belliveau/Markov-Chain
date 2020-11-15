@@ -29,6 +29,8 @@ pub fn get_id(l: char) -> usize {
     CHAR_SET.find(l.to_ascii_lowercase()).unwrap_or(0)
 }
 
+// Get id from String 
+// (unused because manipulating ID directly is much faster)
 pub fn get_str_id(word: &str) -> IDType {
     let mut id = 0 as IDType;
 
