@@ -4,7 +4,9 @@ This is a project paid for by [**Qiong Zhou Huang**](www.mit.edu) as an attempt 
 
 ## How To Compile
 
-You're going to need Rust to compile this. Just CD into the repository, and run `cargo run -- --help` for the help page. You need to use `cargo run --` in order to use any of the other command line options.
+You're going to need Rust to compile this. Just CD into the repository, and run `cargo run --release -- --help` for the help page. You need to use `cargo run --` in order to use any of the other command line options.
+
+using `--release` is 100% worth it as it makes generating markov chains based on large data sets orders of magnitude faster.
 
 ## How to use
 
