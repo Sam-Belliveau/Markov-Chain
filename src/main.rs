@@ -30,7 +30,7 @@ fn valid_output_length(v: String) -> Result<(), String> {
 fn main() {
     // Taking in Arguments
     let matches = App::new("Sam's Markov Chain Generator")
-        .version("0.1.0")
+        .version("0.2.0")
         .author("Sam Belliveau <sam.belliveau@gmail.com>")
         .about("Generate text based on the character probabilities from a given dictionary.")
         .arg(Arg::with_name("dictionary")
