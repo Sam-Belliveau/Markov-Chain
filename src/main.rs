@@ -69,7 +69,7 @@ fn main() {
     let mut probabilities = vec![char_prob::CharProb::new(); array_size];
 
     // Buffer of the last n characters to build probabilities of
-    let mut buffer = String::from(" ");
+    let mut buffer = String::from("");
 
     for (i, line) in dictionary.lines().enumerate() {
         // Check if the line has any issues before adding it to probability table
@@ -98,7 +98,7 @@ fn main() {
     }
 
     // Generate text from previously generated probabilites
-    let mut buffer = String::from(" ");
+    let mut buffer = String::from("");
 
     for _i in 0..output_length {
         // Get id of the past (n) characters [the index in the probability array]
