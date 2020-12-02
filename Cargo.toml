@@ -1,7 +1,12 @@
 [package]
+authors = ["Sam Belliveau <sam.belliveau@gmail.com>"]
+description = "a utility for creating markov chains based on dictionaries"
+license = "GPL"
+homepage = "https://github.com/Sam-Belliveau/Markov-Chain"
+repository = "https://github.com/Sam-Belliveau/Markov-Chain"
+readme = "readme.md"
 name = "markov_chain"
 version = "0.2.0"
-authors = ["Sam Belliveau <sam.belliveau@gmail.com>"]
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

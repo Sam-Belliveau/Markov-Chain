@@ -2,6 +2,15 @@
 
 This is a project paid for by [**Qiong Zhou Huang**](www.mit.edu) as an attempt to generate LMFAO statements similar to his friend **Endar**
 
+## How to install
+
+### Arch Linux
+To install this package on arch linux, run:
+```sh
+wget https://github.com/Sam-Belliveau/Markov-Chain/releases/download/0.2.0/markov_chain-bin-0.2.0-1-x86_64.pkg.tar.xz
+sudo pacman -U ./markov_chain-bin-0.2.0-1-x86_64.pkg.tar.xz
+```
+
 ## How To Compile
 
 You're going to need Rust to compile this. Just CD into the repository, and run `cargo run --release -- --help` for the help page. You need to use `cargo run --` in order to use any of the other command line options.
