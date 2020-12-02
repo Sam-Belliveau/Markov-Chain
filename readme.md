@@ -11,6 +11,8 @@ wget https://github.com/Sam-Belliveau/Markov-Chain/releases/download/0.2.0/marko
 sudo pacman -U ./markov_chain-bin-0.2.0-1-x86_64.pkg.tar.xz
 ```
 
+Then you should be able to run by running `> markov_chain`
+
 ## How To Compile
 
 You're going to need Rust to compile this. Just CD into the repository, and run `cargo run --release -- --help` for the help page. You need to use `cargo run --` in order to use any of the other command line options.
